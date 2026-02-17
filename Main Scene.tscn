@@ -116,7 +116,7 @@ skeleton = NodePath("../Floor")
 shape = SubResource("ConvexPolygonShape3D_0ejt0")
 
 [node name="MeshInstance3D5" type="MeshInstance3D" parent="Course"]
-transform = Transform3D(-4.3711392e-08, 0, 7.5, 0, 10, 0, -1, 0, -3.2783544e-07, -6.25, 11, 2.7319618e-07)
+transform = Transform3D(-4.3711392e-08, 0, 7.5, 0, 10, 0, -1, 0, -3.2783544e-07, -6, 11, 0)
 material_override = ExtResource("1_2uwcf")
 mesh = SubResource("BoxMesh_pey1u")
 skeleton = NodePath("../Floor")
@@ -127,7 +127,7 @@ skeleton = NodePath("../Floor")
 shape = SubResource("ConvexPolygonShape3D_pey1u")
 
 [node name="MeshInstance3D6" type="MeshInstance3D" parent="Course"]
-transform = Transform3D(1, 0, 1.1368684e-13, 0, 10, 0, -3.5527137e-15, 0, 15, -9.25, 10, -2.5936732)
+transform = Transform3D(1, 0, 1.1368684e-13, 0, 10, 0, -3.5527137e-15, 0, 15, -9.25, 10, -2.5)
 material_override = ExtResource("1_2uwcf")
 mesh = SubResource("BoxMesh_pey1u")
 skeleton = NodePath("../Floor")

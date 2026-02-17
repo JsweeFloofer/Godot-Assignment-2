@@ -15,6 +15,7 @@ public partial class CamLookat : Marker3D
 	private float pitch;
 	private float yaw;
 
+	private float camDistanceMax = 10f;
 	private float camDistance;
 	private float camRotSpeed = 2.5f;
 
