@@ -25,6 +25,7 @@ Triggers=""
 Deadzone=""
 Checkpoint=""
 Camera=""
+Ground=""
 
 [input]
 
@@ -88,3 +89,7 @@ deny={
 , Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":1,"pressure":0.0,"pressed":true,"script":null)
 ]
 }
+
+[layer_names]
+
+3d_physics/layer_2="level"
