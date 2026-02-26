@@ -242,7 +242,7 @@ wait_time = 3.0
 one_shot = true
 
 [node name="Marker3D" type="Marker3D" parent="." node_paths=PackedStringArray("moveTarget", "cam", "rayCenter", "rayTop", "rayBottom", "rayLeft", "rayRight", "camTimer")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 1)
+transform = Transform3D(0.6946332, -0.19580825, 0.6922021, 0, 0.96224177, 0.27219632, -0.71936405, -0.18907662, 0.6684051, 0, 2.5, 1)
 script = ExtResource("3_2uwcf")
 moveTarget = NodePath("../Player")
 cam = NodePath("Camera3D")

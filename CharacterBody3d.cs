@@ -167,7 +167,7 @@ public partial class CharacterBody3d : CharacterBody3D
 			{
                 speedCap += maxSpeed / 10;
 				Scale = new Vector3(1, 1 / maxSpeed * speedCap, 1);
-				Position = new Vector3(Position.X, Position.Y + 0.05f, Position.Z);
+				Position = new Vector3(Position.X, Position.Y, Position.Z);
 			}
 			else if (speedCap > maxSpeed)
 			{

@@ -25,10 +25,16 @@ public partial class CamLookat : Marker3D
 
     private float pitch;
 	private float yaw;
+    private float pitchOffset;
+    private float yawOffset;
 
-	private float camDistanceMax = 6f;
+
+    private float camDistanceMax = 6f;
 	private float camDistance;
 	private float camRotSpeed = 2.5f;
+
+    private float wallOffset = 0.25f;
+
 
 	[Export]
 	public Timer camTimer;
@@ -48,6 +54,7 @@ public partial class CamLookat : Marker3D
 		idle = false;
 
 		camTimer.Timeout += OnCamIdleTimeout;
+		camDistance = camDistanceMax;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -61,40 +68,6 @@ public partial class CamLookat : Marker3D
 
     public override void _PhysicsProcess(double delta)
     {
-        rayCenter.TargetPosition = cam.Position;
-        rayTop.TargetPosition = cam.Position + new Vector3(0, 0.1f, 0.5f);
-        rayBottom.TargetPosition = cam.Position + new Vector3(0, -0.1f, 0.5f);
-        rayLeft.TargetPosition = cam.Position + new Vector3(0.1f, 0, 0.5f);
-        rayRight.TargetPosition = cam.Position + new Vector3(-0.1f, 0, 0.5f);
-
-        if (rayCenter.IsColliding())
-		{
-			GD.Print(cam.Position.DistanceTo(rayCenter.GetCollisionPoint()));
-			cam.Position = cam.Position.Slerp(new Vector3(0, 0, cam.Position.Z - cam.Position.DistanceTo(rayCenter.GetCollisionPoint())), (float)delta * (cam.Position.DistanceTo(rayCenter.GetCollisionPoint())));
-		}
-		else if (!rayCenter.IsColliding() && !rayTop.IsColliding() && !rayBottom.IsColliding() && !rayLeft.IsColliding() && !rayRight.IsColliding())
-		{
-            cam.Position = cam.Position.Slerp(new Vector3(0, 0, camDistanceMax), (float)delta);
-        }
-
-        if (rayTop.IsColliding())
-        {
-            pitch += 0.5f * camRotSpeed / 5f * (float)delta;
-        }
-        if (rayBottom.IsColliding())
-        {
-            pitch -= 0.5f * camRotSpeed / 5f * (float)delta;
-        }
-        if (rayLeft.IsColliding())
-        {
-            yaw -= 0.5f * camRotSpeed / 5f * (float)delta;
-        }
-        if (rayRight.IsColliding())
-		{
-            yaw += 0.5f * camRotSpeed / 5f * (float)delta;
-        }
-
-
 		Position = Position.Slerp(moveTarget.Position + new Vector3(0, 1, 0), (float)delta * 4);
 
         Vector2 camInputDir = Input.GetVector("viewLeft", "viewRight", "viewDown", "viewUp");
@@ -113,15 +86,17 @@ public partial class CamLookat : Marker3D
 			}
 		}
 
+
         Vector2 plrInputDir = Input.GetVector("left", "right", "back", "forward");
 
         Vector3 targetRotation = new Vector3 (Rotation.X + camInputDir.Y, Rotation.Y + camInputDir.X, 0);
-        //GD.Print(targetRotation);
+
 
 		pitch += camInputDir.Y * camRotSpeed * (float)delta;
         yaw += camInputDir.X * camRotSpeed * (float)delta;
 
 		pitch = Mathf.Clamp(pitch, -Mathf.Pi / 2f, Mathf.Pi / 2f);
+
 
 		if (idle && plrInputDir != Vector2.Zero)
 		{
@@ -140,8 +115,64 @@ public partial class CamLookat : Marker3D
             yaw -= plrInputDir.X * camRotSpeed / 2.5f * (float)delta;
         }
 
+        float targetDistance = camDistanceMax;
+        Vector3 rayTarget = new Vector3(0, 0, camDistanceMax);
 
-            Rotation = new Vector3(pitch, yaw, 0);
+        rayCenter.TargetPosition = rayTarget;
+        rayTop.TargetPosition = rayTarget + new Vector3(0, 0.1f, 0.5f);
+        rayBottom.TargetPosition = rayTarget + new Vector3(0, -0.1f, 0.5f);
+        rayLeft.TargetPosition = rayTarget + new Vector3(0.1f, 0, 0.5f);
+        rayRight.TargetPosition = rayTarget + new Vector3(-0.1f, 0, 0.5f);
+
+        if (rayCenter.IsColliding())
+        {
+            GD.Print(cam.Position.DistanceTo(rayCenter.GetCollisionPoint()));
+
+            float hitDist = rayCenter.GetCollisionPoint().DistanceTo(GlobalPosition);
+            targetDistance = Mathf.Max(0.5f, hitDist - wallOffset);
+            idle = false;
+            camTimer.Stop();
+        }
+
+        pitchOffset = 0f;
+        yawOffset = 0f;
+
+
+        if (rayTop.IsColliding())
+        {
+            pitchOffset += 1f;
+            idle = false;
+            camTimer.Stop();
+        }
+        if (rayBottom.IsColliding())
+        {
+            pitchOffset -= 1f;
+            idle = false;
+            camTimer.Stop();
+        }
+        if (rayLeft.IsColliding())
+        {
+            yawOffset += 1f;
+            idle = false;
+            camTimer.Stop();
+        }
+        if (rayRight.IsColliding())
+        {
+            yawOffset -= 1f;
+            idle = false;
+            camTimer.Stop();
+        }
+
+        pitch += pitchOffset * camRotSpeed * (float)delta;
+        yaw += yawOffset * camRotSpeed * (float)delta;
+
+        camDistance = Mathf.Lerp(camDistance, targetDistance, (float)delta * 10f);
+        cam.Position = new Vector3(0, 0, camDistance);
+
+        
+
+
+        Rotation = new Vector3(pitch, yaw, 0);
 
         /*if (move)
 		{
